@@ -1,0 +1,66 @@
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Constants
+WIDTH, HEIGHT = 800, 600
+PLAYER_WIDTH, PLAYER_HEIGHT = 100, 20
+BALL_RADIUS = 20
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+# Create the game window
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Catch the Ball")
+
+# Player attributes
+player_x = (WIDTH - PLAYER_WIDTH) // 2
+player_y = HEIGHT - PLAYER_HEIGHT - 10
+player_speed = 5
+
+# Ball attributes
+ball_x = random.randint(0, WIDTH - BALL_RADIUS * 2)
+ball_y = 0
+ball_speed = 3
+
+# Game loop
+running = True
+score = 0
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= player_speed
+    if keys[pygame.K_RIGHT]:
+        player_x += player_speed
+
+    # Update ball position
+    ball_y += ball_speed
+
+    # Check for collisions
+    if (
+        ball_x + BALL_RADIUS > player_x
+        and ball_x < player_x + PLAYER_WIDTH
+        and ball_y + BALL_RADIUS > player_y
+    ):
+        score += 1
+        ball_x = random.randint(0, WIDTH - BALL_RADIUS * 2)
+        ball_y = 0
+
+    # Draw everything
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, WHITE, (player_x, player_y, PLAYER_WIDTH, PLAYER_HEIGHT))
+    pygame.draw.circle(screen, RED, (ball_x + BALL_RADIUS, ball_y + BALL_RADIUS), BALL_RADIUS)
+    pygame.display.flip()
+
+    pygame.time.delay(10)
+
+# Game over
+pygame.quit()
+print(f"Your score: {score}")
